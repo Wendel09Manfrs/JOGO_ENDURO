@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enduro</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css">
+</head>
+
+<body>
+    <main>
+        <section class="titulo">
+            <h1>ENDURO</h1>
+        </section>
+        <section class="playground">
+            <div class="start-screen">
+                <h2>Welcome to Enduro!</h2>
+                <label for="dificuldade">Select the difficulty</label>
+                <select id="selecao-dificuldade">
+                    <option value="1200">Easy</option>
+                    <option value="800">Normal</option>
+                    <option value="400">Hard</option>
+                </select>
+
+
+
+
+                <div class="parametros">
+                    <h4 style="color: aliceblue; font-size: medium;">Insira as elementos iniciais da corrida:</h4>
+                    <div>
+                        <div class="param">
+                            <i class="fas fa-road" style="font-size: large; color: #3b54e3;"></i>
+                            <input style="width:50px; height: 20px;" type="number" class="metros-input"
+                                placeholder="0">
+                            m
+                        </div>
+
+                        <div class="param">
+                            <i class="fas fa-flag-checkered" style="font-size: large; color: #00e5ff;"></i>
+                            <input style="width:50px; height: 20px;" type="number" class="rank-input" placeholder="0">
+                            rd place
+                        </div>
+                    </div>
+
+                    <div>
+
+                        <div class="param">
+                            <i class="fas fa-gas-pump" style="font-size: large; color: #cd7c18;"></i>
+                            <input style="width:50px; height: 20px;" type="number" class="gasolina-input"
+                                placeholder="0"> tanques
+                        </div>
+
+                        <div class="param">
+                            <i class="fas fa-stopwatch" style="font-size: larger; color: #5ae33b;"></i>
+                            <input style="width:50px; height: 20px;" type="number" class="hora-input" placeholder="0">
+                            mins
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <button onclick="atualizarInformacoes()" class="start-button">Iniciar</button>
+            </div>
+
+            <div class="loss" style="display: none">
+                <h2 style="color: white;">
+                    YOU LOST THE RACE!</h2>
+                <h2 class="lossRazao">Você não possui mais combustível para terminar a corrida, está eliminado</h2>
+                <div class="barra" style="color: #00e5ff;">
+                    <i class="fas fa-flag-checkered" style="font-size: 24px; color: #00e5ff;"></i>
+                    <span class="posicaoLoss">0</span>rd place
+                </div>
+
+                <div class="barra" style="color: #00e5ff;">
+                    <i class="fas fa-road" style="font-size: 24px; color: #33439c;"></i>
+                    <span class="percorreuLoss"></span> m
+                </div>
+
+                <div class="barra" style="color: #00e5ff;">
+                    <i class="fas fa-stopwatch" style="font-size: 24px; color: #5ae33b;"></i>
+                    <span class="timerPassaLoss">00:00:00</span>
+                </div>
+            </div>
+
+            <div class="win" style="display: none;">
+                <h2 style="color: white;">YOU WON THE RACE!</h2>
+                <h2 class="winRazao">razao</h2>
+                <div class="barra2">
+                    <i class="fas fa-flag-checkered" style="font-size: 24px; color: #3868d8;"></i>
+                    <span class="posicaoWin">0</span>rd place
+                </div>
+
+                <div class="barra2">
+                    <i class="fas fa-road" style="font-size: 24px; color: #de6f5b;"></i>
+                    <span class="percorreuWin"></span> m
+                </div>
+
+                <div class="barra2">
+                    <i class="fas fa-stopwatch" style="font-size: 24px; color: #f39193;"></i>
+                    <span class="timerPassaWin">00:00:00</span>
+                </div>
+            </div>
+
+
+            <div class="espaco-jogador">
+                <div class="horizonte">
+                    <div class="montanha"></div>
+                </div>
+                <div id="container">
+
+                </div>
+
+                <div class="metricas">
+
+                    <div class="display">
+        
+                        <div class="relogio">
+                            <i class="fas fa-stopwatch" style="font-size: 24px; color: #5ae33b;"></i>
+        
+                            <span class="timer">00:00:00</span>
+        
+                        </div>
+        
+                        <div class="distancia">
+                            <i class="fas fa-road" style="font-size: 24px; color: #3b54e3;"></i>
+        
+                            <span class="metros">0</span> m
+                        </div>
+        
+                        <div class=ranking">
+                            <i class="fas fa-flag-checkered" style="font-size: 24px; color: #00e5ff;"></i>
+                            <span class="rank">0</span>rd place
+                        </div>
+        
+        
+                        <div class=pontuacao">
+                            <i class="fas fa-star" style="font-size: 24px; color: #6b8398;"></i>
+                            <span class="pontos">0</span>
+                        </div>
+        
+                        <div class="escores">
+                            <span class="posto">
+                                <i class="fas fa-gas-pump" style="font-size: 24px; color: #cd7c18;"></i>
+                                <span class="gasolina">0</span>
+                        </div>
+        
+                        <div class="velocidade-div">
+                            <div class="kilometers-icon">
+                                <div class="meter">
+                                    <div class="needle"></div>
+                                </div>
+                            </div>
+                            <span class="velocidade-span">0</span> km/h
+        
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </section>
+        
+    </main>
+    <script src="script.js"></script>
+</body>
+
+</html>

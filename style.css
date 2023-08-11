@@ -1,0 +1,609 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+.titulo h1{
+  font-size: 40px;
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  color: rgb(14, 14, 114);
+}
+
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: rgb(106, 94, 94);
+}
+
+.start-button {
+  padding: 10px 20px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+main{
+    height: 100vh;   
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.playground{
+    background-color: lightslategray;
+    width: 800px;
+    height: 600px;
+    border-radius: 5px;
+    border: solid .25rem red;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 1;  
+}
+
+
+
+
+
+
+/*Parte modificada, coloquei altura e tamanho relativos ao tamanho do sprite 96px de largura por 64 de altura e coloquei como background a figura, tbm retirei a cor que estava*/
+.player {
+  height:61px;
+  width: 89px;
+  bottom: 105px;
+  left: 375px;
+  position: absolute;
+  background-image: url('/Sprites/carBack.gif');
+  background-size: 100% 100%;
+  animation: shake 0.3s linear infinite;
+  overflow : hidden;
+  z-index: 3;
+  border-radius: 30px 30px 5px 5px;
+  
+  
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(-1px);
+    transform:rotate(0deg);
+  }
+  25% {
+    transform: translateX(1px);
+  }
+  50% {
+    transform: translateX(-1px);
+  }
+  75% {
+    transform: translateX(1px);
+  }
+  100% {
+    transform: translateX(-1px);
+    transform:rotate(1deg)
+  }
+}
+
+.display{
+    background-color: rgba(146, 120, 49, 0.817);
+    display: flex;
+    width: 792px ;
+    height: 100px;
+    margin: 0.25rem;
+    border-radius: 10px;
+    align-items: end;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+
+.metricas{
+  width: 800px;
+  display: absolute;
+  justify-content: center;
+  background-color: rgb(10, 1, 88);
+  font-size: 20px;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: 16px;
+  color: #007bff;
+  font-weight: bold;
+  border-radius: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 500px;
+  position: absolute;
+  z-index: 2;
+}
+
+.parametros{
+  background-color: rgb(235, 13, 35);
+  padding: 0.4rem;
+  margin-block: 0.2rem;
+  border-radius: 10px;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    width: 240px;
+    height: 140px;
+    border-radius: 10px;
+    border: solid 3px white;
+   justify-content: space-around;
+    z-index: 3;
+    align-items: center;
+    font-style: oblique;
+    color: rgb(229, 160, 221);
+    
+
+}
+
+.param{
+  margin-bottom: 0.6vh;
+}
+
+
+.velocidade-div{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metricas .timer{
+  color: rgb(229, 160, 221);
+  font-style: oblique;
+  font-size: x-large;
+
+}
+
+.metricas .display{
+ color: rgb(139, 139, 161);
+  font-size: x-large;
+
+}
+
+
+
+.borda-da-pista{
+    position: absolute;
+    width: 0px;
+    display:none;
+}
+
+.pista{
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    width: 100px;
+    
+}
+
+/*PARTE ADICIONADA PARA ANIMAÇÃO DO CARRO INDO PARA OS LADOS*/
+  
+  .player.w {
+    background-image: url('/Sprites/carBack.gif');
+  }
+  
+
+
+  .espaco-jogador{
+    width: 100%;
+    height: 100%;
+    display: flex;   
+    flex-direction: column;
+    
+    position: relative;
+  
+    
+    
+}
+.div-layer {
+  height: 2px; 
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  background-size: cover;
+  background-color:  #7d8487;
+  border-left: solid .25rem red;
+  border-right: solid .25rem red;
+
+}
+
+  #container {
+    height: 420px; /* Defina a altura desejada para a pilha de divs */ 
+    margin-top: 180px;
+    align-items:center;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    overflow: hidden;
+   /* background-image: url('/cenarios/pista/grass.png');
+    background-size: 100% 50%;*/
+
+    
+  }
+
+  
+
+  .horizonte{
+    height: 180px;
+    width: 100%;
+    background-color: blue;
+    background-size: 100% 100%;
+    background-image: url('/cenarios/tempo_dia/noite.gif');
+    position: absolute;
+    filter: brightness(1) grayscale(1%) sepia(2%);
+    display: flex;
+    justify-content: center;
+    z-index: 2;
+  }
+
+  .montanha{
+    height: 10%;
+    width: 20%;
+    background-size: 100% 100%;
+    background-image: url('/cenarios/montanhas/montanha1.png');
+    position: absolute;
+    bottom: 0;
+
+  }
+  
+
+
+  
+.movingDiv {
+  position: absolute;
+  background-image: url('/Sprites/carBack.gif');
+  background-size: 100% 100%;
+  z-index: 3;
+  bottom: 0;
+  border-radius: 30px 30px 5px 5px;
+}
+
+.pontoDiv {
+  position: absolute;
+  background-image: url('/personagens/ponto.gif');
+  background-size: 100% 100%;
+  z-index: 2;
+  bottom: 0;
+}
+
+.postoDiv {
+  position: absolute;
+  background-image: url('/personagens/posto.png');
+  background-size: 100% 100%;
+  z-index: 2;
+  bottom: 0;
+}
+
+
+.fumaca{
+  position: absolute;
+  background-image: url('cenarios/tempo_dia/smoke.png');
+  background-size: 100% 100%;
+  width: 100%;
+  height: 65%;
+  z-index: 2;
+  bottom: 210px;
+  border-radius: 50px;
+  filter: blur(6px);
+  animation: smoke 5s ease-out infinite alternate;
+
+}
+@keyframes smoke {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.25;
+
+  }
+  50%{
+    opacity: 0.5;
+
+  }
+  75%{
+    opacity: 0.75;
+
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.start-screen{
+  position: absolute;
+  background-color: rgb(218, 190, 173);
+    width: 800px;
+    height: 600px;
+    border-radius: 5px;
+    border: solid .25rem white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 3;
+    align-items: center;
+    background-image: url('cenarios/menu.png');
+  background-size: 100% 100%;
+
+}
+
+.loss{
+  position: absolute;
+  background-color: rgb(58, 62, 63);
+    width: 600px;
+    height: 400px;
+    border-radius: 20px;
+    border: solid .25rem white;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 3;
+    align-items: center;
+    background-image: url('personagens/flag.png');
+    background-size: 100% 100%;
+    margin-left: 100px;
+    margin-top: 10px;
+
+}
+
+.lossRazao{
+  color:#5ae33b;
+  font-size: 16px; 
+  text-align: center;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  width: 300px;
+}
+
+.winRazao{
+  color:#3be3d8;
+  font-size: 16px; 
+  text-align: center;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+  width: 300px;
+}
+
+
+
+.win{
+  position: absolute;
+  background-color: rgb(49, 208, 113);
+    width: 600px;
+    height: 400px;
+    border-radius: 20px;
+    border: solid .25rem white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 3;
+    align-items: center;
+    background-image: url('personagens/flag.png');
+  background-size: 100% 100%;
+  margin-left: 100px;
+  margin-top: 10px;
+}
+
+.barra{
+  background-color: #353438;
+  padding: 10px;
+  border: solid 2px#000;
+  width: 40%;
+  border-radius: 10px;
+  
+}
+
+.barra2{
+  background-color: #16d7e1;
+  padding: 10px;
+  border: solid 2px#000;
+  width: 40%;
+  border-radius: 10px;
+  
+}
+
+.start-screen .start-button{
+  background-color: rgb(235, 13, 35);
+  border: solid .25rem white;
+  border-radius: 10px;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  color: antiquewhite;
+  display: flex;
+  width: 200px; 
+  display: flex; /* Usando flexbox */
+  justify-content: center; 
+  align-items: center;
+  
+
+
+}
+.start-screen h2{
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  color: rgb(233, 82, 40);
+  font-size: 30px;
+  background-color: rgb(83, 54, 95);
+  border-radius: 10px;
+  padding: 5px;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+
+
+.start-screen #selecao-dificuldade label{
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: 30px;
+  border-radius: 10px;
+  padding: 5px;
+  
+}
+
+.start-screen #selecao-dificuldade option{
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+ 
+  border-radius: 10px;
+  padding: 5px;
+  
+}
+
+
+.start-screen #selecao-dificuldade{
+  
+  color: rgb(57, 35, 6);
+  font-size: 30px;
+  
+  
+}
+
+label {
+  display: block; /* Isso faz com que o label ocupe toda a largura disponível */
+  font-weight: bold;
+  margin-bottom: 10px;  
+  font-size: 30px;
+  color: rgb(168, 246, 13);
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    
+}
+
+/* Estilizando o select */
+select {
+  width: 200px; /* Largura do select */
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: 30px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none; /* Remove a borda de foco padrão */
+  /* Outros estilos que você queira adicionar */
+  border-radius: 10px;
+  padding: 5px;
+}
+
+
+.kilometers-icon {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.meter {
+  position: relative;
+  width: 60px; /* Tamanho do medidor reduzido */
+  height: 60px; /* Tamanho do medidor reduzido */
+  border-radius: 50%;
+  border: 3px solid #16151c; /* Espessura da borda reduzida */
+  background-color: #0de3ee;
+}
+
+.needle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent; /* Espessura da agulha reduzida */
+  border-right: 5px solid transparent; /* Espessura da agulha reduzida */
+  border-bottom: 30px solid #f01212; /* Altura da agulha reduzida */
+  transform-origin: bottom;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.kilometers {
+  font-size: 14px; /* Tamanho da fonte reduzido */
+  margin-top: 10px;
+  color: #2564a6;
+  font-weight: bold;
+}
+
+.velocidade-div{
+  display: flex;
+  align-items: end;
+}
+
+.velocidade-div .velocidade-span{
+  margin-left: 10px;
+
+}
+.escores{
+  display: flex;
+}
+.pontuacao {
+  display: flex;
+  flex-direction: row;
+}
+
+.pontos{
+  margin-bottom: 5px; /* Espaçamento entre os elementos */
+}
+
+
+
+
+
+
+@keyframes power {
+  0%, 50% {
+    filter: brightness(2);
+     /* Brilho normal no início e no meio do ciclo */
+  }
+  25%, 75% {
+    filter: brightness(4);
+    background-color: rgba(0, 0, 255, 0.3);
+  }
+  100% {
+    filter: brightness(1); /* Voltar ao brilho normal no final */
+  }
+}
+
+.powerAnimation {
+  animation: power 0.5s  linear; /* 2s de duração e manter o estado final */
+}
+
+
+.red-blink {
+  animation: blink 1s infinite forwards;
+}
+
+/* Animação de piscar */
+@keyframes blink {
+  0%{
+    color: red;
+  }
+  50% {
+    color:#ccc; ;
+  }
+
+  100% {
+    color: red;
+  }
+}
+
+.timerPassa{
+  color: rgb(229, 160, 221);
+  font-style: oblique;
+  font-size: x-large;
+}
+
+
+.metros-input{
+  border-radius: 5px;
+  border: 1px solid #ffffff;
+}
+.rank-input{
+  border-radius: 5px;
+  border: 1px solid #ffffff;
+
+
+}
+.gasolina-input{
+  border-radius: 5px;
+  border: 1px solid #ffffff;
+
+}
+
+.hora-input{
+  border-radius: 5px;
+  border: 1px solid #ffffff;
+}
+
+
+
+
+
+
