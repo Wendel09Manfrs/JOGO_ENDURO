@@ -262,7 +262,7 @@ main{
 
 .pontoDiv {
   position: absolute;
-  background-image: url('/personagens/ponto.gif');
+  background-image: url('/Sprites/ponto.gif');
   background-size: 100% 100%;
   z-index: 2;
   bottom: 0;
@@ -270,7 +270,7 @@ main{
 
 .postoDiv {
   position: absolute;
-  background-image: url('/personagens/posto.png');
+  background-image: url('/Sprites/posto.png');
   background-size: 100% 100%;
   z-index: 2;
   bottom: 0;
@@ -339,7 +339,7 @@ main{
     justify-content: center;
     z-index: 3;
     align-items: center;
-    background-image: url('personagens/flag.png');
+    background-image: url('Sprites/flag.png');
     background-size: 100% 100%;
     margin-left: 100px;
     margin-top: 10px;
@@ -376,7 +376,7 @@ main{
     justify-content: center;
     z-index: 3;
     align-items: center;
-    background-image: url('personagens/flag.png');
+    background-image: url('Sprites/flag.png');
   background-size: 100% 100%;
   margin-left: 100px;
   margin-top: 10px;
