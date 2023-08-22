@@ -334,6 +334,7 @@ class ImageDivManager {
   }
 }
 
+
 /*///////CLASSE COM OS MÉTODOS PARA AUDIO E EFEITOS SONOROSL/////////////////////*/
 
 class PlaygroundAudio {
@@ -952,7 +953,7 @@ class MovingDiv {
               this.varMarginInitial - (posicaoAtual) * taxaHorPorVert*0.4 + "px"; //esquerda
           } else {
             novoInimigo.style.marginLeft =
-              this.varMarginInitial - (posicaoAtual) * taxaHorPorVert*1.6 + "px"; //direita
+              this.varMarginInitial - (posicaoAtual) * taxaHorPorVert*2 + "px"; //direita
           }
 
           //uso do posicionamento do carro para simular a perspectiva de aumento ou diminuição do tamanho co carro conforme se distancia ou se aproxima do player
