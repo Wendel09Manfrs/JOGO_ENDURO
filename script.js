@@ -299,7 +299,7 @@ class IfPista{
 
       }
 
-      const imageUrl = `/cenarios/pista/${selectedRange.velocidadePista}.${selectedRange.tipoArquivo}`;
+      const imageUrl = `./cenarios/pista/${selectedRange.velocidadePista}.${selectedRange.tipoArquivo}`;
       const manager = new ImageDivManager('#container', '.div-layer', 4, 517, imageUrl);
       manager.distributeImage();
     }
@@ -342,8 +342,8 @@ class PlaygroundAudio {
       this.volume = this.context.createGain();   
       this.volume.connect(this.context.destination);
       this.oscillator = null;
-      this.audio = new Audio('/music/MusicCarJimmyFontanez.mp3');
-     // this.audio = new Audio('/music/musicCar.mp3');
+      this.audio = new Audio('./music/MusicCarJimmyFontanez.mp3');
+     // this.audio = new Audio('./music/musicCar.mp3');
       this.audio.volume =0.1;
       this.audio.loop = true;
       this.volumeFixo = 0.03; // Valor fixo para o volume (por exemplo, 0.5)
@@ -351,11 +351,11 @@ class PlaygroundAudio {
       this.timer = document.querySelector('.timer');
       this.varTimer3 = (this.timer.innerHTML);
 
-      this.audioWin = new Audio('/music/win.mp3');
-      this.audioLoss = new Audio('/music/loss.mp3');
-      this.audioGas = new Audio('/music/gasolina.mp3');
-      this.audioStar = new Audio('/music/estrelas.mp3');
-      this.audioPower = new Audio('music/power.mp3');
+      this.audioWin = new Audio('./music/win.mp3');
+      this.audioLoss = new Audio('./music/loss.mp3');
+      this.audioGas = new Audio('./music/gasolina.mp3');
+      this.audioStar = new Audio('./music/estrelas.mp3');
+      this.audioPower = new Audio('./music/power.mp3');
       this.audioWin.volume =0.1;
       this.audioLoss.volume =0.1;
       this.audioGas.volume =0.1;
@@ -479,7 +479,7 @@ class Jogo {
         const periodoDia = new PeriodoDia();
         periodoDia.startAnimation();
         this.insereNoPlayground(...elementos);
-        const manager = new ImageDivManager('#container', '.div-layer', 4, 517, '/cenarios/pista/pistaParada.png');
+        const manager = new ImageDivManager('#container', '.div-layer', 4, 517, './cenarios/pista/pistaParada.png');
         manager.distributeImage(); 
         const animationController = new AnimationController();
         playgroundAudio.playMusic();
@@ -1370,26 +1370,26 @@ class PeriodoDia {
     this.filters = [
       {
         backgroundColor: 'green', // Dia
-        montanhaBackgroundImage: 'url(/cenarios/montanhas/montanha1.png)',
-        horizonteBackgroundImage: 'url(cenarios/tempo_dia/nuvens.gif)',
+        montanhaBackgroundImage: 'url(./cenarios/montanhas/montanha1.png)',
+        horizonteBackgroundImage: 'url(./cenarios/tempo_dia/nuvens.gif)',
         containerFilter: 'brightness(120%) contrast(100%) saturate(120%)'
       },
       {
         backgroundColor: 'black', // Noite
-        montanhaBackgroundImage: 'url(/cenarios/montanhas/montanha1.png)',
-        horizonteBackgroundImage: 'url(cenarios/tempo_dia/noite.gif)',
+        montanhaBackgroundImage: 'url(./cenarios/montanhas/montanha1.png)',
+        horizonteBackgroundImage: 'url(./cenarios/tempo_dia/noite.gif)',
         containerFilter: 'brightness(15%) contrast(100%) saturate(1000%)'
       },
       {
         backgroundColor: 'white', // Neve
-        montanhaBackgroundImage: 'url(/cenarios/montanhas/montanha2.png)',
-        horizonteBackgroundImage: 'url(cenarios/tempo_dia/neve.gif)',
+        montanhaBackgroundImage: 'url(./cenarios/montanhas/montanha2.png)',
+        horizonteBackgroundImage: 'url(./cenarios/tempo_dia/neve.gif)',
         containerFilter: 'brightness(120%) contrast(100%) saturate(10%)'
       },
       {
         backgroundColor: 'DarkSlateGray', // Cerrado
-        montanhaBackgroundImage: 'url(/cenarios/montanhas/montanha1.png)',
-        horizonteBackgroundImage: 'url(cenarios/tempo_dia/cerrado.gif)',
+        montanhaBackgroundImage: 'url(./cenarios/montanhas/montanha1.png)',
+        horizonteBackgroundImage: 'url(./cenarios/tempo_dia/cerrado.gif)',
         containerFilter: 'brightness(40%) contrast(80%) saturate(90%) blur(2px)'
       }
     ];
