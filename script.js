@@ -12,8 +12,6 @@ let selecaoDificuldade=2000; //valor padrao faacil
 
 var hours;
 
-
-
 class Dificuldade {
   constructor() {
     this.dificuldade = document.getElementById("selecao-dificuldade");
@@ -86,10 +84,6 @@ function atualizarInformacoes() {
        hours = 5; // Valor padrão se não for inserido um número válido
 }
 
-
-
-
-
 }
 
 const lugarWin = document.querySelector('.posicaoWin');
@@ -98,6 +92,9 @@ const distanciaWin = document.querySelector('.percorreuWin');
 
 const lugarLoss = document.querySelector('.posicaoLoss');
 const distanciaLoss = document.querySelector('.percorreuLoss');
+
+
+const botao = document.querySelector('.start-button');
 
 const distanciaMontain = parseInt(distancia.innerHTML);
 
@@ -234,11 +231,6 @@ let timerPassa = new TimerPassa();
 class Pista {
     constructor(){
         this.elemento = novoElemento('div', 'pista');
-       
-        const pistAnima = new MovingDiv();
-        pistAnima.criarDivs();
-        pistAnima.empilhamento();
-        
     }
 
     getPista(){
@@ -247,25 +239,21 @@ class Pista {
 }
 
 /*//////MUDANÇA NO MOVIMENTO DA ESTRADA BASEADO NA VELOCIDADE RECEBIDA, USANDO GIFS/////*/
-class IfPista{
+class Horizonte{
   constructor(){
   this.distancia = document.querySelector('.metros');
   this.metros = parseInt(distancia.innerHTML);
   this.montanha = document.querySelector('.montanha');
   this.width = 20;  //objtivo 80%
   this.height = 10;  //objetivo 40%
-  this.total = parseInt(distancia.innerHTML);
-  
-  
-  
+  this.total = parseInt(distancia.innerHTML); 
   }
-  
-  usarIf(velocidadeFinal){
+  animMontanha(velocidadeFinal){
     const velocidadeRanges = [
-      { start: 0, end: 0, velocidadePista: 'pistaParada', index: 1, subtracao: 0, tipoArquivo: 'png' },
-      { start: 1, end: 60, velocidadePista: 'pistaLenta', index: 2,  subtracao: 0.2, tipoArquivo: 'gif' },
-      { start: 61, end: 130, velocidadePista: 'pistaMedia', index: 3,  subtracao: 0.4, tipoArquivo: 'gif' },
-      { start: 130, end: 200, velocidadePista: 'pistaRapida', index: 4,  subtracao: 0.6, tipoArquivo: 'gif' },
+      { start: 0, end: 0, subtracao: 0, },
+      { start: 1, end: 60, subtracao: 0.2, },
+      { start: 61, end: 130, subtracao: 0.4, },
+      { start: 130, end: 200,  subtracao: 0.6, },
     ];
 
     let selectedRange = velocidadeRanges.find(
@@ -298,39 +286,7 @@ class IfPista{
         this.distancia.innerHTML = (this.metros);
 
       }
-
-      const imageUrl = `./cenarios/pista/${selectedRange.velocidadePista}.${selectedRange.tipoArquivo}`;
-      const manager = new ImageDivManager('#container', '.div-layer', 4, 517, imageUrl);
-      manager.distributeImage();
     }
-  }
-}
-
-/*///////FATIAMENTO DA IMAGEM EM CADA DIV QUE FORMA A ESTRADA/////////////////////*/
-class ImageDivManager {
-  constructor(containerW, divizinha, alturadiv, alturaImagem, imagemCaminho) {
-    this.container = document.querySelector(containerW);
-    this.divs = this.container.querySelectorAll(divizinha);
-    this.alturadiv = alturadiv;
-    this.alturaImagem = alturaImagem;
-    this.imagemCaminho = imagemCaminho;
-  }
-  distributeImage() {
-    this.container.style.position = 'relative';
-    this.divs.forEach((div, index) => {
-      if(index<90){
-      const offsetY = -index * this.alturadiv*5;
-      div.style.backgroundImage = `url(${this.imagemCaminho})`;
-      div.style.backgroundSize = '100%';
-      div.style.backgroundPosition = `center ${offsetY}px`;
-      div.style.overflow = 'hidden';
-      
-      div.style.top = '0';
-      div.style.left = '0';
-    }
-      div.style.height = `${this.alturadiv}px`;
-
-    });
   }
 }
 
@@ -480,16 +436,23 @@ class Jogo {
         const periodoDia = new PeriodoDia();
         periodoDia.startAnimation();
         this.insereNoPlayground(...elementos);
-        const manager = new ImageDivManager('#container', '.div-layer', 4, 517, './cenarios/pista/pistaParada.png');
-        manager.distributeImage(); 
+       
         const animationController = new AnimationController();
         playgroundAudio.playMusic();
         timer.iniciarTemporizador(hours);
         timerPassa.inicia();
+        
+        const movDiv = new MovingDiv("container");
+        movDiv.start();
+        movDiv.verificaCondicoes();
+        movDiv.criarDivs();
+        movDiv.empilhamento();
+       // const borda = new Borda();
+       movDiv.animaBorda();
+       movDiv.verificando();
 
-        const verificar = new MovingDiv();
-        verificar.verificaCondicoes();
-      
+        const pistBord = new PistaBorda();
+        pistBord.aplicarEstilos();
         
     }
 }
@@ -498,7 +461,7 @@ class AnimationController {
   constructor() {
     this.anim = 0;
     this.step = 0; // Valor inicial do incremento
-    this.movingDiv = new MovingDiv(); 
+    
     this.animationActivated = Array(9).fill(false);
 
     this.gasolina = parseInt(posto.innerHTML);
@@ -510,6 +473,40 @@ class AnimationController {
    document.addEventListener('keydown', this.handleKeyPress.bind(this));
    document.addEventListener('keyup', this.handleKeyRelease.bind(this));
     window.addEventListener('blur', this.stopIncrement.bind(this));
+  }
+
+  moveDivsToRight(tempoDeTransicao) {
+    const fatiasEstrada = document.querySelectorAll('#container .div-layer'); 
+    const montanha = document.querySelector('.montanha');
+
+    let currentMargin2 = parseInt(window.getComputedStyle(montanha).marginRight || 0);
+   
+    for (var i = 0; i < 90; i++) {
+      var div = fatiasEstrada[i];
+      var currentMargin = parseInt(window.getComputedStyle(div).marginLeft || 0);
+      var newMargin = currentMargin + Math.exp((6.055 - 0.04*i));       
+      div.style.marginLeft = newMargin + 'px';  
+     div.style.transition = `margin-left ${tempoDeTransicao}s ease`;
+    }
+    montanha.style.marginRight = currentMargin2+50 + 'px';
+    montanha.style.transition = `margin-right ${tempoDeTransicao*3}s ease`;
+    
+  }
+  //Math.exp((6.055 - 0.04*i));
+  moveDivsToLeft(tempoDeTransicao) {
+    const fatiasEstrada2 = document.querySelectorAll('#container .div-layer'); 
+    const montanha = document.querySelector('.montanha');
+    let currentMargin2 = parseInt(window.getComputedStyle(montanha).marginRight || 0); 
+    for (var i = 0; i < 90; i++) {
+      var div = fatiasEstrada2[i];
+      var currentMargin = parseInt(window.getComputedStyle(div).marginRight || 0);
+      var newMargin = currentMargin + Math.exp((6.055 - 0.04*i));     
+      div.style.marginRight = newMargin + 'px';
+      
+      div.style.transition = `margin-right ${tempoDeTransicao}s ease`;
+    }
+    montanha.style.marginLeft = currentMargin2+50 + 'px';
+    montanha.style.transition = `margin-left ${tempoDeTransicao*1}s ease`;
   }
   handleKeyPress(event) {
     if (event.key === 'w') {
@@ -587,9 +584,9 @@ class AnimationController {
     for (const range of animationRanges) {
       if (this.anim > range.start && this.anim < range.end && !this.animationActivated[range.index]) {
         if (range.moveDirection === 'left') {
-          this.movingDiv.moveDivsToLeft(1);//esquerda
+          this.moveDivsToLeft(1);//esquerda
         } else if (range.moveDirection === 'right') {
-          this.movingDiv.moveDivsToRight(1);
+          this.moveDivsToRight(1);
         }
         this.animationActivated[range.index] = true;
         break;
@@ -600,6 +597,33 @@ class AnimationController {
       this.animationActivated = Array(9).fill(false);
     }
   }
+}
+class PistaBorda {
+  constructor() {
+    this.fatiasEstrada = document.querySelectorAll('#container .div-layer');
+    this.listaValores = [];
+    this.indice = 0;
+    this.listaCores = [];
+    this.medidorV = document.querySelector('.velocidade-span');
+    
+    for (let i = 0; i <= 90; i++) {
+      this.listaValores.push(i);
+    }
+  }
+
+  aplicarEstilos() {
+    this.fatiasEstrada.forEach((elemento, i) => {
+      if (i <= 90) {
+        const cor = i % 30 < 15 ? 'red' : 'white';
+        const largura = `${i / 40}rem`;
+        this.listaCores.push(cor); 
+        elemento.style.borderRight = `${largura} solid ${cor}`;
+        elemento.style.borderLeft = `${largura} solid ${cor}`;
+      }
+    });
+  }
+
+  
 }
 
 /////////////////////////////////////////////////////////
@@ -619,11 +643,34 @@ class MovingDiv {
     this.ponteiroV=-45;
     this.maxVel =45;
     this.minVel =-45;
+    this.inicio = 0
+    this.limite = 10;
+
+
+    this.limite2 = Math.ceil(this.limite);
     this.reductionInterval = null;
     this.medidorVel = document.querySelector('.velocidade-span');
 
     this.power = document.querySelector('.pontos');
     this.pontao = 0;
+
+    this.listaValores = [];
+    this.listaCores = [];
+
+    this.indice = 0;
+    this.speedBord = 0; // Velocidade inicial
+
+    this.speedBordMax = 10;
+    this.speedBordMin = 0;
+    this.speedBordCeil = 0;
+
+   for (let i = 0; i <=90; i++) {
+    this.listaValores.push(i);
+   }
+   for (let i = 0; i <= 90; i++) {
+    const cor = i % 30 < 15 ? 'red' : 'white';
+    this.listaCores.push(cor);
+  }
 
     this.gas = parseFloat(posto.innerHTML);
     this.gasolina = (posto.innerHTML);
@@ -635,20 +682,21 @@ class MovingDiv {
     this.loss = document.querySelector('.loss');
     this.win = document.querySelector('.win');
 
-    this.ifpista= new IfPista();
+    this.horizonte= new Horizonte();
     this.elementoNeedle = document.querySelector('.needle');
 
     this.mensagemWin = document.querySelector('.winRazao');
     this.mensagemLoss = document.querySelector('.lossRazao');
     this.keysPressed = {}; 
-   // this.start();
-   //this.verificaCondicoes();
+
    
     document.addEventListener('keydown', this.apertaTecla.bind(this));
     document.addEventListener('keyup', this.liberaTecla.bind(this));
     window.addEventListener('blur', this.stopIncrement2.bind(this));
     playgroundAudio.play(); 
   }
+
+
   apertaTecla(event) {
     playgroundAudio.atualizaFrequenciaOscilador( this.quilometragem);
      
@@ -656,9 +704,12 @@ class MovingDiv {
     if (event.key === 'w') {
       
       this.speed += 0.005;
+      this.speedBord += 0.025;
+
       this.quilometragem+= 0.5;
       this.ponteiroV+=0.225;
       this.medidorVel.innerHTML= Math.ceil(this.quilometragem);
+      
      
       this.elementoNeedle.style.transform = `translate(-50%, -50%) rotate(${this.ponteiroV}deg)`;
       this.gas -= 0.005;
@@ -669,6 +720,10 @@ class MovingDiv {
 
       if (this.speed > this.maxSpeed) {
         this.speed = this.maxSpeed; 
+      }
+      
+      if (this.speedBord > this.speedBordMax) {
+        this.speedBord = this.speedBordMax;
       }
 
      
@@ -687,10 +742,11 @@ class MovingDiv {
       }
 
       this.stopIncrement2();
-     
     } else if (event.key === 's') {
     
-     this.speed -= 0.005; 
+     this.speed -= 0.005;
+     this.speedBord -= 0.025; // Initial speed
+ 
      this.quilometragem-= 0.5;
      this.ponteiroV-= 0.225;
      this.medidorVel.innerHTML= Math.ceil(this.quilometragem);
@@ -701,6 +757,11 @@ class MovingDiv {
 
      }
 
+     if (this.speedBord < this.speedBordMin) {
+      this.speedBord = this.speedBordMin;
+    }
+
+
      if(this.quilometragem <this.minQuilometragem){
       this.quilometragem=this.minQuilometragem;
       this.medidorVel.innerHTML= Math.ceil(this.quilometragem);
@@ -709,8 +770,11 @@ class MovingDiv {
     if(this.ponteiroV<this.minVel){
       this.ponteiroV=this.minVel;
     }
-      this.stopIncrement2();  
+    this.stopIncrement2();
     }
+    this.speedBordCeil = Math.ceil(this.speedBord);
+    this.animaBorda(this.speedBordCeil);
+
   }
     liberaTecla(event) {
       playgroundAudio.atualizaFrequenciaOscilador( this.quilometragem);
@@ -718,6 +782,10 @@ class MovingDiv {
       this.stopIncrement2();
       this.startIncrement2(); 
     }
+    stopIncrement2() {
+      clearInterval(this.incrementInterval2);
+    }
+
     startIncrement2() {
     this.relogio = (tempo.innerHTML);
  
@@ -733,11 +801,11 @@ class MovingDiv {
 
         if(this.relogio === '00:00:00'|| this.metros === 0 || this.gasolina === 0){
           this.stopIncrement2();
-        }
-        
-        
-    
+          this.animaBorda(0);
+        } 
         this.speed -= 0.005;
+
+        this.speedBord -= 0.025;
         this.quilometragem-= 0.5;
         this.ponteiroV-=0.225;
         this.medidorVel.innerHTML= Math.ceil(this.quilometragem);
@@ -745,7 +813,15 @@ class MovingDiv {
 
         if (this.speed < this.minSpeed) {
          this.speed = this.minSpeed; 
+
         }
+        if (this.speedBord < this.speedBordMin) {
+          this.speedBord = this.speedBordMin;
+        }
+  
+        this.speedBordCeil = Math.ceil(this.speedBord);
+        this.animaBorda(this.speedBordCeil);
+
         if(this.ponteiroV<this.minVel){
          this.ponteiroV=this.minVel;
         }
@@ -754,19 +830,30 @@ class MovingDiv {
          this.quilometragem=this.minQuilometragem;
          this.medidorVel.innerHTML= Math.ceil(this.quilometragem);
         }
-
-
       }, 100); 
     }
-  
-    stopIncrement2() {
-      
-      clearInterval(this.incrementInterval2);
+    verificando(){
+      this.framez = setInterval(() => {
+        this.animaBorda(this.speedBordCeil);
+     
+       }, 15);
     }
-
+    animaBorda(vel) {
+      const fatiasBorda = document.querySelectorAll('#container .div-layer');
+      for (let i = 0; i < vel; i++) {
+          let ultimoElemento = this.listaValores.pop();
+          this.listaValores.unshift(ultimoElemento);
+          
+      }
+          for (let j = 0; j <= 90; j++) {
+            this.indice = this.listaValores[j];
+            fatiasBorda[j].style.borderRightColor = this.listaCores[this.indice];
+            fatiasBorda[j].style.borderLeftColor = this.listaCores[this.indice];
+          }
+      }
 
   updateInterval() {
-    clearInterval(this.interval);
+    clearInterval(this.interval); 
     this.interval = setInterval(() => {
       const movingDivElements = document.querySelectorAll('.movingDiv');
       const numberOfMovingDivs = movingDivElements.length;
@@ -782,10 +869,8 @@ class MovingDiv {
         this.stop();
       }
       
-
     }, selecaoDificuldade);
   }
-
   updateIntervalPonto() {
     clearInterval(this.interval2);
     this.interval2 = setInterval(() => {
@@ -804,40 +889,32 @@ class MovingDiv {
     this.interval3 = setInterval(() => {
       const movingDivElements = document.querySelectorAll('.postoDiv');
       const numberOfPostosDivs = movingDivElements.length;
-
-
       if(numberOfPostosDivs >=0 && numberOfPostosDivs<=5){      
       this.moveDivPosto();
     }      
 
     }, (selecaoDificuldade+10234));
   }
-
   start() {
     this.updateInterval();
     this.updateIntervalPonto();
     this.updateIntervalPosto();
   }
-
   stop() {
     clearInterval(this.interval);
     clearInterval(this.interval2);
     clearInterval(this.interval3);
     
   }
-
   verificaCondicoes(){
-
     this.intervalVerifica = setInterval(() => {
     this.gasolina = parseInt(posto.innerHTML);
     this.relogio = (tempo.innerHTML);
     this.metros = parseInt(distancia.innerHTML);
-    this.ifpista.usarIf(this.quilometragem);
+    this.horizonte.animMontanha(this.quilometragem);
     this.rank = lugar.innerHTML;
     lugarWin.innerHTML = this.rank;
-    distanciaWin.innerHTML = this.total - this.metros;
-    
-     
+    distanciaWin.innerHTML = this.total - this.metros;   
     lugarLoss.innerHTML = this.rank;
     distanciaLoss.innerHTML = this.total - this.metros;
 
@@ -861,23 +938,17 @@ class MovingDiv {
         this.mensagemLoss.innerHTML='Você terminou a corrida, mas não a venceu';
         }
         playgroundAudio.playLoss();
-        this.loss.style.display='flex';
-                   
-        }
-                
+        this.loss.style.display='flex';                
+        }              
         timer.parar();
         timerPassa.parar();
         playgroundAudio.stop();
         playgroundAudio.stopMusic();
-        this.ifpista.usarIf(0);
-        clearInterval(this.intervalVerifica);
-                  
+        this.horizonte.animMontanha(0);
+        clearInterval(this.intervalVerifica);               
     }
-
   }, 10);
-
   }
-
   moveDiv() {
     const fatiasEstrada = document.querySelectorAll('#container .div-layer');
 
@@ -890,7 +961,6 @@ class MovingDiv {
 
       let numeroAleatorio = Math.floor(Math.random() * 31) - 10; // Gera um número aleatório entre -20 e 20
       novoInimigo.style.left = numeroAleatorio + 'px';
-
 
       //informações do container
       this.containerWidth = this.container.offsetWidth;
@@ -916,12 +986,11 @@ class MovingDiv {
       this.metros = parseInt(distancia.innerHTML);
       this.rank = lugar.innerHTML;
         distanciaWin.innerHTML = this.total - this.metros;
-         distanciaLoss.innerHTML = this.total - this.metros;
+         distanciaLoss.innerHTML = this.total - this.metros;      
          distancia.innerHTML= this.metros;
+      
       let frameInterval = setInterval(() => {
-         
-         
-
+           // Exemplo de impressão após a operação
         if(this.relogio === '00:00:00'|| this.metros === 0 || this.gasolina === 0){
           distanciaWin.innerHTML = this.total - this.metros;
          distanciaLoss.innerHTML = this.total - this.metros;
@@ -929,9 +998,6 @@ class MovingDiv {
           clearInterval(frameInterval);
 
         }
-
-        
-
         if (posicaoAtual >= (this.containerHeight)) {    //se o elemento chegar na base do container ele será deletado       
           this.container.removeChild(novoInimigo); 
           
@@ -941,8 +1007,7 @@ class MovingDiv {
           if(this.rank <1){
             this.rank = 1;
             lugar.innerHTML= this.rank;
-          }
-          
+          }        
 
         } else {
           posicaoAtual += this.speed;  //a posição atual dependerá da variável speed que é influenciada por diversas variaveis, evento de teclas e a falta de tais eventos, simulando o efeito do carro desacelerar caso não haja nenhum comando no carro do player.
@@ -1004,7 +1069,6 @@ class MovingDiv {
 
          }
         
-
         if (diferencaAltura < (this.AlturaDoDeBaixo)) {
      
         let margemEsquerdaDoInimigo = parseInt(inimigosTodos[i].style.marginLeft);
@@ -1018,9 +1082,10 @@ class MovingDiv {
           this.larguraDoMaisAesq1 = this.larguraDoPlayer;
 
        }
-
          if(diferencaMargem < (this.larguraDoMaisAesq1)){//aplicação de redução de velocidade
           this.speed -= 0.05;
+          this.speedBord -= 0.25;
+       
           this.quilometragem -= 5;
           playgroundAudio.atualizaFrequenciaOscilador(this.quilometragem);
           this.ponteiroV -=2.5;  
@@ -1043,14 +1108,14 @@ class MovingDiv {
           
           setTimeout(function() {
             player.classList.remove('powerAnimation');
-          }, 500);
-          
-
-          
+          }, 500);        
         }    
         //limites impostos as variáveis
           if (this.speed < this.minSpeed) {
             this.speed = this.minSpeed; 
+          }
+          if (this.speedBord < this.speedBordMin) {
+            this.speedBord = this.speedBordMin;
           }
           if(this.ponteiroV<this.minVel){
             this.ponteiroV=this.minVel;
@@ -1069,11 +1134,11 @@ class MovingDiv {
           }
 
         }
-
-        }
+      }
       }, this.speed);
     }
   }
+
   //as mesmas lógicas foram aplicadas a estes outros métodos que manipulam os pontos e combustivel
   moveDivPonto() {
     const fatiasPista = document.querySelectorAll('#container .div-layer');
@@ -1141,8 +1206,6 @@ class MovingDiv {
 
         const divPonto2= document.querySelector('.pontoDiv');
 
-
-
         let bottomPonto = parseInt(divPonto2.style.bottom);
         let alturaDoPonto = parseInt(divPonto2.offsetHeight);
         let diferencaAltura2 = Math.abs(this.bottomDoPlayer - bottomPonto);
@@ -1151,10 +1214,7 @@ class MovingDiv {
            this.AlturaDoDeBaixo2 = alturaDoPonto;
         }else{
            this.AlturaDoDeBaixo2 = this.alturaDoPlayer;
-
         }
-        
-
        if (diferencaAltura2 < this.AlturaDoDeBaixo2) {
 
         let margemEsquerdaDoPonto = parseInt(divPonto2.style.marginLeft);
@@ -1164,10 +1224,7 @@ class MovingDiv {
         if(this.margemEsquerdaDoPlayer> margemEsquerdaDoPonto){
           this.larguraDoMaisAesq2 = larguraDoPonto;
        }else{
-          this.larguraDoMaisAesq2 = this.larguraDoPlayer;
-
-       }
-
+          this.larguraDoMaisAesq2 = this.larguraDoPlayer;}
          if(diferencaMargem2 < this.larguraDoMaisAesq2){
           playgroundAudio.playStar(); 
           this.pontao += 1;
@@ -1255,11 +1312,7 @@ class MovingDiv {
           this.AlturaDoDeBaixo3 = this.alturaDoPlayer;
 
        }
-
-
        if (diferencaAltura3 < this.AlturaDoDeBaixo3) {
-
-
         let margemEsquerdaDoPosto = parseInt(divPosto3.style.marginLeft);
         let larguraDoPosto = parseInt(divPosto3.offsetWidth);
         let diferencaMargem3 = Math.abs(this.margemEsquerdaDoPlayer - margemEsquerdaDoPosto);
@@ -1270,7 +1323,6 @@ class MovingDiv {
           this.larguraDoMaisAesq3 = this.larguraDoPlayer;
 
        }
-
          if(diferencaMargem3 < this.larguraDoMaisAesq3){
           playgroundAudio.playGas(); 
           this.gas += 1;
@@ -1289,14 +1341,9 @@ class MovingDiv {
     return `${cor}deg`;
   }
 
-  novoElemento(tagName, className) {
-    const elemento = document.createElement(tagName);
-    elemento.className = className;
-    return elemento;
-  }
   criarDivs() {
       for (let i = 0; i < 125; i++) {
-        const div = this.novoElemento('div', 'div-layer');
+        const div = novoElemento('div', 'div-layer');
         const primeiraDiv = this.container2.firstChild;
         if (primeiraDiv) {
           this.container2.insertBefore(div, primeiraDiv);
@@ -1312,6 +1359,7 @@ class MovingDiv {
       const widthPercentage =(i * 1);
       if(i<100){
         fatiasEstrada[i].style.width = widthPercentage + '%';   
+        
       }else{
         fatiasEstrada[i].style.width = 100 + '%';   
       }
@@ -1319,43 +1367,10 @@ class MovingDiv {
       if (i >= 0 && i < 8) {
           fatiasEstrada[i].remove();
         }
+        fatiasEstrada[i].style.height = `4px`;  
     }
-  }
-  moveDivsToRight(tempoDeTransicao) {
-    const fatiasEstrada = document.querySelectorAll('#container .div-layer'); 
-    const montanha = document.querySelector('.montanha');
-
-    let currentMargin2 = parseInt(window.getComputedStyle(montanha).marginRight || 0);
-   
-    for (var i = 0; i < 90; i++) {
-      var div = fatiasEstrada[i];
-      var currentMargin = parseInt(window.getComputedStyle(div).marginLeft || 0);
-      var newMargin = currentMargin + Math.exp((6.055 - 0.04*i));       
-      div.style.marginLeft = newMargin + 'px';  
-     div.style.transition = `margin-left ${tempoDeTransicao}s ease`;
-    }
-    montanha.style.marginRight = currentMargin2+50 + 'px';
-    montanha.style.transition = `margin-right ${tempoDeTransicao*3}s ease`;
-    
-  }
-  //Math.exp((6.055 - 0.04*i));
-  moveDivsToLeft(tempoDeTransicao) {
-    const fatiasEstrada = document.querySelectorAll('#container .div-layer'); 
-    const montanha = document.querySelector('.montanha');
-    let currentMargin2 = parseInt(window.getComputedStyle(montanha).marginRight || 0); 
-    for (var i = 0; i < 90; i++) {
-      var div = fatiasEstrada[i];
-      var currentMargin = parseInt(window.getComputedStyle(div).marginRight || 0);
-      var newMargin = currentMargin + Math.exp((6.055 - 0.04*i));     
-      div.style.marginRight = newMargin + 'px';
-      
-      div.style.transition = `margin-right ${tempoDeTransicao}s ease`;
-    }
-    montanha.style.marginLeft = currentMargin2+50 + 'px';
-    montanha.style.transition = `margin-left ${tempoDeTransicao*1}s ease`;
   }
 }
-
 class PeriodoDia {
   constructor() {
     this.espacoJogador = document.querySelector('.espaco-jogador');
@@ -1433,22 +1448,17 @@ class PeriodoDia {
     this.container.style.filter = currentFilter.containerFilter;   
   }
 }
-
 // script.js
 document.addEventListener("DOMContentLoaded", function () {
   // Obtém elementos do DOM
   const startScreen = document.querySelector(".start-screen");
   const startButton = document.querySelector(".start-button");
-  const parametros = document.querySelector('.parametros');
-
   // Adiciona um ouvinte de evento para o botão de início
   startButton.addEventListener("click", function () {
   startScreen.style.display = "none";
-  parametros.style.display = "none";
 
   const jogo = new Jogo();
-  jogo.inicia();
-  const movingDivInstance = new MovingDiv("container");
-  movingDivInstance.start();    
+  jogo.inicia(); 
+  
   });
 });
