@@ -54,7 +54,7 @@ main{
 /*Parte modificada, coloquei altura e tamanho relativos ao tamanho do sprite 96px de largura por 64 de altura e coloquei como background a figura, tbm retirei a cor que estava*/
 .player {
   height:61px;
-  width: 89px;
+  width: 88px;
   bottom: 105px;
   left: 375px;
   position: absolute;

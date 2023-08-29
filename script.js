@@ -622,8 +622,6 @@ class PistaBorda {
       }
     });
   }
-
-  
 }
 
 /////////////////////////////////////////////////////////
@@ -668,7 +666,7 @@ class MovingDiv {
     this.listaValores.push(i);
    }
    for (let i = 0; i <= 90; i++) {
-    const cor = i % 30 < 15 ? 'red' : 'white';
+    const cor = i % 30 < 15 ? 'red' : 'grey';
     this.listaCores.push(cor);
   }
 
@@ -801,7 +799,6 @@ class MovingDiv {
 
         if(this.relogio === '00:00:00'|| this.metros === 0 || this.gasolina === 0){
           this.stopIncrement2();
-          this.animaBorda(0);
         } 
         this.speed -= 0.005;
 
@@ -840,6 +837,9 @@ class MovingDiv {
     }
     animaBorda(vel) {
       const fatiasBorda = document.querySelectorAll('#container .div-layer');
+      if(this.relogio === '00:00:00'|| this.metros === 0 || this.gasolina === 0){
+        vel=0;
+      }
       for (let i = 0; i < vel; i++) {
           let ultimoElemento = this.listaValores.pop();
           this.listaValores.unshift(ultimoElemento);
@@ -857,7 +857,14 @@ class MovingDiv {
     this.interval = setInterval(() => {
       const movingDivElements = document.querySelectorAll('.movingDiv');
       const numberOfMovingDivs = movingDivElements.length;
-      if(numberOfMovingDivs>=0 && numberOfMovingDivs<=4){
+
+      const ultimaDiv = this.container2.lastElementChild;
+      const ultimoBottom = parseInt(ultimaDiv.style.bottom);
+      const containerHeight = this.container2.offsetHeight;
+      const disTopo = containerHeight - ultimoBottom;
+
+      if(disTopo>55&&numberOfMovingDivs>=1 && numberOfMovingDivs<=3||numberOfMovingDivs===0){
+
       this.moveDiv();
     }
       this.gasolina = parseInt(posto.innerHTML);
@@ -875,23 +882,23 @@ class MovingDiv {
     clearInterval(this.interval2);
     this.interval2 = setInterval(() => {
 
-      const movingPontosElements = document.querySelectorAll('.pontoDiv');
-      const numberOfPontosDivs = movingPontosElements.length;
+    //  const movingPontosElements = document.querySelectorAll('.pontoDiv');
+    //  const numberOfPontosDivs = movingPontosElements.length;
 
-      if(numberOfPontosDivs >=0 && numberOfPontosDivs<=5){
+    //  if(numberOfPontosDivs >=0 && numberOfPontosDivs<=3){
         this.moveDivPonto();
-    }
+  //  }
     }, (selecaoDificuldade+5231));
   }
 
   updateIntervalPosto() {
     clearInterval(this.interval3);
     this.interval3 = setInterval(() => {
-      const movingDivElements = document.querySelectorAll('.postoDiv');
-      const numberOfPostosDivs = movingDivElements.length;
-      if(numberOfPostosDivs >=0 && numberOfPostosDivs<=5){      
+   //   const movingDivElements = document.querySelectorAll('.postoDiv');
+   //   const numberOfPostosDivs = movingDivElements.length;
+    //  if(numberOfPostosDivs >=0 && numberOfPostosDivs<=3){      
       this.moveDivPosto();
-    }      
+   // }      
 
     }, (selecaoDificuldade+10234));
   }
@@ -1034,8 +1041,6 @@ class MovingDiv {
           if(limSup> 420){
             this.container.removeChild(novoInimigo);    
           }  
-          
-          
           //nessa lógica, conforme o bottom do inimigo abaixa a cada multiplo de 6px do divBottom(altura de cada div da pista), ele toma pra si a margem dessa div e mais uma margem adicional adiquirida anteriormente, respeitando o formato da curva, seja curvada ou reta.
           //da div corres)
           const divBottom = 420-parseInt(novoInimigo.style.bottom);
@@ -1400,7 +1405,7 @@ class PeriodoDia {
         backgroundColor: 'white', // Neve
         montanhaBackgroundImage: 'url(./cenarios/montanhas/montanha2.png)',
         horizonteBackgroundImage: 'url(./cenarios/tempo_dia/neve.gif)',
-        containerFilter: 'brightness(120%) contrast(100%) saturate(10%)'
+        containerFilter: 'brightness(60%) contrast(100%) saturate(60%)'
       },
       {
         backgroundColor: 'DarkSlateGray', // Cerrado
