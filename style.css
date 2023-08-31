@@ -20,11 +20,6 @@ body {
   background-color: rgb(106, 94, 94);
 }
 
-.start-button {
-  padding: 10px 20px;
-  font-size: 20px;
-  cursor: pointer;
-}
 
 main{
     height: 100vh;   
@@ -205,19 +200,22 @@ main{
   background-size: cover;
   background-color:  #272a2c;
   box-sizing: border-box;
+  
 
 }
 
   #container {
-    height: 420px; /* Defina a altura desejada para a pilha de divs */ 
+    height: 480px; /* Defina a altura desejada para a pilha de divs */ 
     margin-top: 180px;
     align-items:center;
     display: flex;
     flex-direction: column;
     justify-content: end;
     overflow: hidden;
+    
    /* background-image: url('./cenarios/pista/grass.png');
     background-size: 100% 50%;*/
+    
 
     
   }
@@ -409,8 +407,28 @@ main{
   display: flex; /* Usando flexbox */
   justify-content: center; 
   align-items: center;
+  padding: 10px 20px;
+  font-size: 20px;
+  cursor: pointer;
   
 
+
+}
+
+.jogueNov{
+  background-color: rgb(239, 33, 1);
+  border: solid .25rem rgb(255, 255, 255);
+  border-radius: 10px;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  color: rgb(255, 255, 255);
+  display: flex;
+  width: 200px; 
+  display: flex; /* Usando flexbox */
+  justify-content: center; 
+  align-items: center;
+  padding: 10px 20px;
+  font-size: 20px;
+  cursor: pointer;
 
 }
 .start-screen h2{

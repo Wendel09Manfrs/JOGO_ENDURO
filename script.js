@@ -76,7 +76,7 @@ function atualizarInformacoes() {
   if (lugarValido) {
       lugar.innerHTML = lugarInserido;
   } else {
-      lugar.innerHTML = 30; // Valor padrão se não for inserido um número válido
+      lugar.innerHTML = 100; // Valor padrão se não for inserido um número válido
   }
   if (horaValido) {
        hours = horaInserido;
@@ -301,7 +301,7 @@ class PlaygroundAudio {
       this.oscillator = null;
       this.audio = new Audio('./music/MusicCarJimmyFontanez.mp3');
      // this.audio = new Audio('./music/musicCar.mp3');
-      this.audio.volume =0.1;
+      this.audio.volume =0.01;
       this.audio.loop = true;
       this.volumeFixo = 0.03; // Valor fixo para o volume (por exemplo, 0.5)
       this.volume.gain.value = this.volumeFixo;
@@ -461,7 +461,6 @@ class AnimationController {
   constructor() {
     this.anim = 0;
     this.step = 0; // Valor inicial do incremento
-    
     this.animationActivated = Array(9).fill(false);
 
     this.gasolina = parseInt(posto.innerHTML);
@@ -470,16 +469,15 @@ class AnimationController {
     this.rank = lugar.innerHTML;
    
    
-   document.addEventListener('keydown', this.handleKeyPress.bind(this));
-   document.addEventListener('keyup', this.handleKeyRelease.bind(this));
+   document.addEventListener('keydown', this.teclaPress.bind(this));
+   document.addEventListener('keyup', this.teclaNoPress.bind(this));
     window.addEventListener('blur', this.stopIncrement.bind(this));
   }
 
   moveDivsToRight(tempoDeTransicao) {
     const fatiasEstrada = document.querySelectorAll('#container .div-layer'); 
-    const montanha = document.querySelector('.montanha');
 
-    let currentMargin2 = parseInt(window.getComputedStyle(montanha).marginRight || 0);
+   
    
     for (var i = 0; i < 90; i++) {
       var div = fatiasEstrada[i];
@@ -488,15 +486,14 @@ class AnimationController {
       div.style.marginLeft = newMargin + 'px';  
      div.style.transition = `margin-left ${tempoDeTransicao}s ease`;
     }
-    montanha.style.marginRight = currentMargin2+50 + 'px';
-    montanha.style.transition = `margin-right ${tempoDeTransicao*3}s ease`;
+
     
   }
   //Math.exp((6.055 - 0.04*i));
   moveDivsToLeft(tempoDeTransicao) {
     const fatiasEstrada2 = document.querySelectorAll('#container .div-layer'); 
-    const montanha = document.querySelector('.montanha');
-    let currentMargin2 = parseInt(window.getComputedStyle(montanha).marginRight || 0); 
+    
+
     for (var i = 0; i < 90; i++) {
       var div = fatiasEstrada2[i];
       var currentMargin = parseInt(window.getComputedStyle(div).marginRight || 0);
@@ -505,10 +502,9 @@ class AnimationController {
       
       div.style.transition = `margin-right ${tempoDeTransicao}s ease`;
     }
-    montanha.style.marginLeft = currentMargin2+50 + 'px';
-    montanha.style.transition = `margin-left ${tempoDeTransicao*1}s ease`;
+    
   }
-  handleKeyPress(event) {
+  teclaPress(event) {
     if (event.key === 'w') {
       this.changeAnimation(this.step);
       this.step += 1; // aumenta o incremento
@@ -527,7 +523,7 @@ class AnimationController {
     
     }
   }
-    handleKeyRelease(event) {
+    teclaNoPress(event) {
       this.stopIncrement();
       this.startIncrement(); 
     }
@@ -558,11 +554,11 @@ class AnimationController {
     }
   
   changeAnimation(amount) {
-    
-    
+    const montanha = document.querySelector('.montanha');
     this.gasolina = parseFloat(posto.innerHTML);
     this.relogio = (tempo.innerHTML);
     this.metros = parseInt(distancia.innerHTML);
+    this.contador =0;
     this.rank = lugar.innerHTML;
     if (this.relogio === '00:00:00' || this.metros === 0 || this.gasolina === 0) {
       amount = 0;
@@ -582,11 +578,18 @@ class AnimationController {
     ];
 
     for (const range of animationRanges) {
+      let currentMargin = parseInt(window.getComputedStyle(montanha).marginRight || 0);
       if (this.anim > range.start && this.anim < range.end && !this.animationActivated[range.index]) {
         if (range.moveDirection === 'left') {
+          this.contador++;
           this.moveDivsToLeft(1);//esquerda
+          montanha.style.marginRight = currentMargin+this.contador + 'px';
+          montanha.style.transition = `margin-right ${1}s ease`;
+
         } else if (range.moveDirection === 'right') {
           this.moveDivsToRight(1);
+          montanha.style.marginLeft = currentMargin+this.contador  + 'px';
+          montanha.style.transition = `margin-left ${1}s ease`;
         }
         this.animationActivated[range.index] = true;
         break;
@@ -614,7 +617,7 @@ class PistaBorda {
   aplicarEstilos() {
     this.fatiasEstrada.forEach((elemento, i) => {
       if (i <= 90) {
-        const cor = i % 30 < 15 ? 'red' : 'white';
+        const cor = i % 30 < 15 ? 'red' : 'rgb(186, 186, 186)';
         const largura = `${i / 40}rem`;
         this.listaCores.push(cor); 
         elemento.style.borderRight = `${largura} solid ${cor}`;
@@ -654,6 +657,7 @@ class MovingDiv {
 
     this.listaValores = [];
     this.listaCores = [];
+    this.listaCoresCentro = [];
 
     this.indice = 0;
     this.speedBord = 0; // Velocidade inicial
@@ -662,13 +666,20 @@ class MovingDiv {
     this.speedBordMin = 0;
     this.speedBordCeil = 0;
 
-   for (let i = 0; i <=90; i++) {
+   for (let i = 0; i <=100; i++) {
     this.listaValores.push(i);
    }
-   for (let i = 0; i <= 90; i++) {
-    const cor = i % 30 < 15 ? 'red' : 'grey';
+   for (let i = 0; i <= 100; i++) {
+    const cor = i % 20 < 10 ? 'red' : 'rgb(186, 186, 186)';
     this.listaCores.push(cor);
   }
+
+  for (let i = 0; i <= 100; i++) {
+    const cor = i % 20 < 10 ? '#272a2c' : 'white';
+    this.listaCoresCentro.push(cor);
+  }
+
+  
 
     this.gas = parseFloat(posto.innerHTML);
     this.gasolina = (posto.innerHTML);
@@ -827,7 +838,7 @@ class MovingDiv {
          this.quilometragem=this.minQuilometragem;
          this.medidorVel.innerHTML= Math.ceil(this.quilometragem);
         }
-      }, 100); 
+      }, 200); 
     }
     verificando(){
       this.framez = setInterval(() => {
@@ -849,6 +860,7 @@ class MovingDiv {
             this.indice = this.listaValores[j];
             fatiasBorda[j].style.borderRightColor = this.listaCores[this.indice];
             fatiasBorda[j].style.borderLeftColor = this.listaCores[this.indice];
+            fatiasBorda[j].style.background = `linear-gradient(to right, #272a2c 48%, ${this.listaCoresCentro[this.indice]} 50%, #272a2c 52%)`;
           }
       }
 
@@ -1022,7 +1034,7 @@ class MovingDiv {
 
           if (taxaHorPorVert >= 0) {  //controle do carro desde a margem inicial até a margem final, com um certo intervalo de aleatoriedade
             novoInimigo.style.marginLeft =
-              this.varMarginInitial - (posicaoAtual) * taxaHorPorVert*0.4 + "px"; //esquerda
+              this.varMarginInitial - (posicaoAtual) * taxaHorPorVert*0.3 + "px"; //esquerda
           } else {
             novoInimigo.style.marginLeft =
               this.varMarginInitial - (posicaoAtual) * taxaHorPorVert*2 + "px"; //direita
@@ -1087,6 +1099,7 @@ class MovingDiv {
           this.larguraDoMaisAesq1 = this.larguraDoPlayer;
 
        }
+       this.margemEsquerdaDoPlayer2 = parseInt(player.style.left.split('px')[0]) || 375;   
          if(diferencaMargem < (this.larguraDoMaisAesq1)){//aplicação de redução de velocidade
           this.speed -= 0.05;
           this.speedBord -= 0.25;
@@ -1405,7 +1418,7 @@ class PeriodoDia {
         backgroundColor: 'white', // Neve
         montanhaBackgroundImage: 'url(./cenarios/montanhas/montanha2.png)',
         horizonteBackgroundImage: 'url(./cenarios/tempo_dia/neve.gif)',
-        containerFilter: 'brightness(60%) contrast(100%) saturate(60%)'
+        containerFilter: 'brightness(100%) contrast(100%) saturate(80%)'
       },
       {
         backgroundColor: 'DarkSlateGray', // Cerrado
@@ -1458,6 +1471,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Obtém elementos do DOM
   const startScreen = document.querySelector(".start-screen");
   const startButton = document.querySelector(".start-button");
+  const reiniciarBtn = document.querySelector(".jogueNov");
   // Adiciona um ouvinte de evento para o botão de início
   startButton.addEventListener("click", function () {
   startScreen.style.display = "none";
@@ -1466,4 +1480,10 @@ document.addEventListener("DOMContentLoaded", function () {
   jogo.inicia(); 
   
   });
+  reiniciarBtn.addEventListener("click", function() {
+      let reiniciar = window.location; 
+      reiniciar.reload();
+  });
 });
+
+
