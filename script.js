@@ -860,7 +860,7 @@ class MovingDiv {
             this.indice = this.listaValores[j];
             fatiasBorda[j].style.borderRightColor = this.listaCores[this.indice];
             fatiasBorda[j].style.borderLeftColor = this.listaCores[this.indice];
-            fatiasBorda[j].style.background = `linear-gradient(to right, #272a2c 48%, ${this.listaCoresCentro[this.indice]} 50%, #272a2c 52%)`;
+            fatiasBorda[j].style.background = `linear-gradient(to right, #272a2c 47%, ${this.listaCoresCentro[this.indice]} 50%, #272a2c 53%)`;
           }
       }
 
@@ -978,7 +978,13 @@ class MovingDiv {
       let novoInimigo = novoElemento('div', 'movingDiv');
       this.container.appendChild(novoInimigo);// o carro torna-se "filho" do elemento container
 
-      let numeroAleatorio = Math.floor(Math.random() * 31) - 10; // Gera um número aleatório entre -20 e 20
+      
+     
+
+
+
+
+      let numeroAleatorio = Math.floor(Math.random() * 15) - 10; 
       novoInimigo.style.left = numeroAleatorio + 'px';
 
       //informações do container
@@ -994,7 +1000,7 @@ class MovingDiv {
       let taxaHorPorVert = horizontal/this.containerHeight;/* conforme o elemento desce pele container, ele varia à uma taxa horizontal relativo a uma  taxa vertical, dependendo da posição aletória que o elemento vai alcançar a margem inferior do container*/
 
       novoInimigo.style.marginLeft = this.varMarginInitial + "px";
-
+      
       // Generate a random filter color
       const randomColor = this.generateRandomColor();
       novoInimigo.style.filter = `hue-rotate(${randomColor})`;// variação nas cores dos elementos(carros inimigos)
@@ -1010,6 +1016,8 @@ class MovingDiv {
       
       let frameInterval = setInterval(() => {
            // Exemplo de impressão após a operação
+        const inimigosTodos= document.querySelectorAll('.movingDiv');
+      
         if(this.relogio === '00:00:00'|| this.metros === 0 || this.gasolina === 0){
           distanciaWin.innerHTML = this.total - this.metros;
          distanciaLoss.innerHTML = this.total - this.metros;
@@ -1017,7 +1025,10 @@ class MovingDiv {
           clearInterval(frameInterval);
 
         }
-        if (posicaoAtual >= (this.containerHeight)) {    //se o elemento chegar na base do container ele será deletado       
+
+     
+        if(inimigosTodos.length>0){
+        if (posicaoAtual >= (this.containerHeight)&&inimigosTodos.length>0) {    //se o elemento chegar na base do container ele será deletado       
           this.container.removeChild(novoInimigo); 
           
           this.rank -=1;   //caso o player tenha estrelas, ele poderá usá-las para eliminar alguns carros que impedem sua passagem
@@ -1153,6 +1164,9 @@ class MovingDiv {
 
         }
       }
+    }
+
+
       }, this.speed);
     }
   }
@@ -1382,7 +1396,7 @@ class MovingDiv {
         fatiasEstrada[i].style.width = 100 + '%';   
       }
       
-      if (i >= 0 && i < 8) {
+      if (i >= 0 && i < 4) {
           fatiasEstrada[i].remove();
         }
         fatiasEstrada[i].style.height = `4px`;  
