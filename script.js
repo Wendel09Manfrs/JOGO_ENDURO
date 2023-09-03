@@ -500,18 +500,23 @@ class AnimationController {
     this.metros = parseInt(distancia.innerHTML)
     this.rank = lugar.innerHTML
 
+    document.addEventListener('touchstart', this.touchStart.bind(this));
+    document.addEventListener('touchend', this.touchEnd.bind(this));
+    
     document.addEventListener('keydown', this.teclaPress.bind(this))
     document.addEventListener('keyup', this.teclaNoPress.bind(this))
     window.addEventListener('blur', this.stopIncrement.bind(this))
+
+    
   }
 
   moveDivsToRight(tempoDeTransicao) {
     const fatiasEstrada = document.querySelectorAll('#container .div-layer')
 
-    for (var i = 0; i < 95; i++) {
+    for (var i = 0; i < 105; i++) {
       var div = fatiasEstrada[i]
       var currentMargin = parseInt(window.getComputedStyle(div).marginLeft || 0)
-      var newMargin = currentMargin + Math.exp(6.055 - 0.04 * i)
+      var newMargin = currentMargin + Math.exp(6.055 - 0.025 * i)
       div.style.marginLeft = newMargin + 'px'
       div.style.transition = `margin-left ${tempoDeTransicao}s ease`
     }
@@ -520,12 +525,12 @@ class AnimationController {
   moveDivsToLeft(tempoDeTransicao) {
     const fatiasEstrada2 = document.querySelectorAll('#container .div-layer')
 
-    for (var i = 0; i < 95; i++) {
+    for (var i = 0; i < 105; i++) {
       var div = fatiasEstrada2[i]
       var currentMargin = parseInt(
         window.getComputedStyle(div).marginRight || 0,
       )
-      var newMargin = currentMargin + Math.exp(6.055 - 0.04 * i)
+      var newMargin = currentMargin + Math.exp(6.055 - 0.025 * i)
       div.style.marginRight = newMargin + 'px'
 
       div.style.transition = `margin-right ${tempoDeTransicao}s ease`
@@ -552,6 +557,39 @@ class AnimationController {
     this.stopIncrement()
     this.startIncrement()
   }
+
+  touchStart(event) {
+    // Obtém as coordenadas do toque
+    const touchX = event.touches[0].clientX;
+    const touchY = event.touches[0].clientY;
+  
+    if (touchY < window.innerHeight / 2) {
+      // Toque acima do centro da tela (gesto "w")
+      this.changeAnimation(this.step);
+      this.step += 1;
+      if (this.step > 10) {
+        this.step = 10;
+      }
+      this.stopIncrement();
+    } else if (touchY >= window.innerHeight / 2) {
+      // Toque abaixo do centro da tela (gesto "s")
+      this.changeAnimation(this.step);
+      this.step -= 1;
+      if (this.step < 0) {
+        this.step = 0;
+      }
+      this.stopIncrement();
+    }
+  }
+  
+  touchEnd(event) {
+    this.stopIncrement();
+    this.startIncrement();
+  }
+  
+
+
+
 
   startIncrement() {
     this.relogio = tempo.innerHTML
@@ -645,14 +683,14 @@ class PistaBorda {
     this.listaCores = []
     this.medidorV = document.querySelector('.velocidade-span')
 
-    for (let i = 0; i <= 95; i++) {
+    for (let i = 0; i <= 100; i++) {
       this.listaValores.push(i)
     }
   }
 
   aplicarEstilos() {
     this.fatiasEstrada.forEach((elemento, i) => {
-      if (i <= 95) {
+      if (i <= 100) {
         const cor = i % 30 < 15 ? 'red' : 'rgb(186, 186, 186)'
         const largura = `${i / 40}rem`
         this.listaCores.push(cor)
@@ -667,8 +705,8 @@ class PistaBorda {
 class MovingDiv {
   constructor(containerId) {
     this.speed = -0.5 // Initial speed
-    this.maxSpeed = 1.0 // Maximum speed
-    this.minSpeed = -1.0 // Minimum speed
+    this.maxSpeed = 5.0 // Maximum speed
+    this.minSpeed = -5.0 // Minimum speed
     this.interval = null
     this.isPageVisible = true
     this.container = document.getElementById(containerId)
@@ -734,6 +772,10 @@ class MovingDiv {
     document.addEventListener('keydown', this.apertaTecla.bind(this))
     document.addEventListener('keyup', this.liberaTecla.bind(this))
     window.addEventListener('blur', this.stopIncrement2.bind(this))
+
+    document.addEventListener('touchstart', this.touchStart.bind(this));
+    document.addEventListener('touchend', this.touchEnd.bind(this));
+
     playgroundAudio.play()
   }
 
@@ -741,7 +783,7 @@ class MovingDiv {
     playgroundAudio.atualizaFrequenciaOscilador(this.quilometragem)
 
     if (event.key === 'w') {
-      this.speed += 0.005
+      this.speed += 0.025
       this.speedBord += 0.0125
 
       this.quilometragem += 0.5
@@ -776,7 +818,7 @@ class MovingDiv {
 
       this.stopIncrement2()
     } else if (event.key === 's') {
-      this.speed -= 0.005
+      this.speed -= 0.025
       this.speedBord -= 0.0125 // Initial speed
 
       this.quilometragem -= 0.5
@@ -811,6 +853,95 @@ class MovingDiv {
     this.stopIncrement2()
     this.startIncrement2()
   }
+
+
+  touchStart(event) {
+    // Obtém as coordenadas do toque
+    const touchX = event.touches[0].clientX;
+    const touchY = event.touches[0].clientY;
+  
+    if (touchY < window.innerHeight / 2) {
+      this.speed += 0.025
+      this.speedBord += 0.0125
+
+      this.quilometragem += 0.5
+      this.ponteiroV += 0.225
+      this.medidorVel.innerHTML = Math.ceil(this.quilometragem)
+
+      this.elementoNeedle.style.transform = `translate(-50%, -50%) rotate(${this.ponteiroV}deg)`
+      this.gas -= 0.005
+      posto.innerHTML = Math.ceil(this.gas)
+
+      if (this.speed > this.maxSpeed) {
+        this.speed = this.maxSpeed
+      }
+
+      if (this.speedBord > this.speedBordMax) {
+        this.speedBord = this.speedBordMax
+      }
+
+      if (this.gas <= 0) {
+        this.gas = 0
+        posto.innerHTML = this.gas
+      }
+
+      if (this.quilometragem > this.maxQuilometragem) {
+        this.quilometragem = this.maxQuilometragem
+        this.medidorVel.innerHTML = this.quilometragem
+      }
+
+      if (this.ponteiroV > this.maxVel) {
+        this.ponteiroV = this.maxVel
+      }
+
+      this.stopIncrement2()
+    } else if (touchY >= window.innerHeight / 2) {
+      this.speed -= 0.025
+      this.speedBord -= 0.0125 // Initial speed
+
+      this.quilometragem -= 0.5
+      this.ponteiroV -= 0.225
+      this.medidorVel.innerHTML = Math.ceil(this.quilometragem)
+      this.elementoNeedle.style.transform = `translate(-50%, -50%) rotate(${this.ponteiroV}deg)`
+
+      if (this.speed < this.minSpeed) {
+        this.speed = this.minSpeed
+      }
+
+      if (this.speedBord < this.speedBordMin) {
+        this.speedBord = this.speedBordMin
+      }
+
+      if (this.quilometragem < this.minQuilometragem) {
+        this.quilometragem = this.minQuilometragem
+        this.medidorVel.innerHTML = Math.ceil(this.quilometragem)
+      }
+
+      if (this.ponteiroV < this.minVel) {
+        this.ponteiroV = this.minVel
+      }
+      this.stopIncrement2()
+    }
+  
+    this.speedBordCeil = Math.ceil(this.speedBord)
+    this.animaBorda(this.speedBordCeil)
+  }
+  
+  touchEnd(event) {
+    playgroundAudio.atualizaFrequenciaOscilador(this.quilometragem)
+    this.stopIncrement2()
+    this.startIncrement2()
+  }
+  
+
+
+
+
+
+
+
+
+
   stopIncrement2() {
     clearInterval(this.incrementInterval2)
   }
@@ -833,7 +964,7 @@ class MovingDiv {
       ) {
         this.stopIncrement2()
       }
-      this.speed -= 0.005
+      this.speed -= 0.025
 
       this.speedBord -= 0.0125
       this.quilometragem -= 0.5
@@ -859,7 +990,7 @@ class MovingDiv {
         this.quilometragem = this.minQuilometragem
         this.medidorVel.innerHTML = Math.ceil(this.quilometragem)
       }
-    }, 200)
+    }, 100)
   }
   verificando() {
     this.framez = setInterval(() => {
@@ -1055,7 +1186,7 @@ class MovingDiv {
         novoInimigo.style.filter = `hue-rotate(${randomColor})` // variação nas cores dos elementos(carros inimigos)
       }
 
-      let frameInterval = setInterval(() => {
+      const animate = () => {
         // Exemplo de impressão após a operação
         let ha_Inimigos = document.querySelector('.movingDiv')
 
@@ -1067,7 +1198,6 @@ class MovingDiv {
           distanciaWin.innerHTML = this.total - this.metros
           distanciaLoss.innerHTML = this.total - this.metros
           distancia.innerHTML = this.metros
-          clearInterval(frameInterval)
         }
 
         if (
@@ -1230,136 +1360,142 @@ class MovingDiv {
             }
           }
         }
-      }, this.speed)
+        requestAnimationFrame(animate);
+      };
+  
+      animate();
     }
   }
 
-  //as mesmas lógicas foram aplicadas a estes outros métodos que manipulam os pontos e combustivel
   moveDivPonto() {
     if (this.speed >= -0.5 && this.isPageVisible) {
-      let divPonto = novoElemento('div', 'pontoDiv')
-      this.container.appendChild(divPonto)
-
-      let numeroAleatorio2 = Math.floor(Math.random() * 4) - 1 // Gera um número aleatório entre -20 e 20
-      let randomMarginLeft2 = Math.floor(
-        Math.random() * (this.containerWidth - 200),
-      ) // Ajuste o valor "100" de acordo com a largura desejada para as divs
-      let horizontal2 = Math.floor(this.varMarginInitial - randomMarginLeft2)
-      let taxaHorPorVert2 = horizontal2 / this.containerHeight
-
-      let ha_Pontos = document.querySelector('.pontoDiv')
-
+      let divPonto = novoElemento('div', 'pontoDiv');
+      this.container.appendChild(divPonto);
+  
+      let numeroAleatorio2 = Math.floor(Math.random() * 4) - 1; // Gera um número aleatório entre -20 e 20
+      let randomMarginLeft2 = Math.floor(Math.random() * (this.containerWidth - 200)); // Ajuste o valor "100" de acordo com a largura desejada para as divs
+      let horizontal2 = Math.floor(this.varMarginInitial - randomMarginLeft2);
+      let taxaHorPorVert2 = horizontal2 / this.containerHeight;
+  
+      let ha_Pontos = document.querySelector('.pontoDiv');
+  
       if (ha_Pontos) {
-        divPonto.style.left = numeroAleatorio2 + 'px'
-        divPonto.style.marginLeft = this.varMarginInitial + 'px'
+        divPonto.style.left = numeroAleatorio2 + 'px';
+        divPonto.style.marginLeft = this.varMarginInitial + 'px';
       }
-
-      let posicaoAtual2 = 0
-
-      let frameInterval2 = setInterval(() => {
-        let ha_Pontos = document.querySelector('.pontoDiv')
-
-        this.gasolina = parseInt(posto.innerHTML)
-        this.relogio = tempo.innerHTML
-        this.metros = parseInt(distancia.innerHTML)
-        this.rank = lugar.innerHTML
-
+  
+      let posicaoAtual2 = 0;
+  
+      const animate = () => {
+        let ha_Pontos = document.querySelector('.pontoDiv');
+  
+        this.gasolina = parseInt(posto.innerHTML);
+        this.relogio = tempo.innerHTML;
+        this.metros = parseInt(distancia.innerHTML);
+        this.rank = lugar.innerHTML;
+  
         if (
           this.relogio === '00:00:00' ||
           this.metros === 0 ||
           this.gasolina === 0
         ) {
-          clearInterval(frameInterval2)
+          return;
         }
-
+  
         if (
           posicaoAtual2 >= this.containerHeight &&
           ha_Pontos &&
           this.container.contains(divPonto)
         ) {
-          this.container.removeChild(divPonto)
-          clearInterval(frameInterval2)
+          this.container.removeChild(divPonto);
+          return;
         } else if (ha_Pontos) {
-          posicaoAtual2 += this.speed
-          divPonto.style.bottom = this.containerHeight - posicaoAtual2 + 'px'
-
+          posicaoAtual2 += this.speed;
+          divPonto.style.bottom = this.containerHeight - posicaoAtual2 + 'px';
+  
           if (taxaHorPorVert2 >= 0) {
             divPonto.style.marginLeft =
               this.varMarginInitial -
               posicaoAtual2 * taxaHorPorVert2 * 0.4 +
-              'px' //taxa de curvatura da parte esquerda
+              'px'; //taxa de curvatura da parte esquerda
           } else {
             divPonto.style.marginLeft =
               this.varMarginInitial -
               posicaoAtual2 * taxaHorPorVert2 * 1.5 +
-              'px' //taxa de curvatura da parte direita
+              'px'; //taxa de curvatura da parte direita
           }
-
-          divPonto.style.width = 2 + posicaoAtual2 / 8 + 'px'
-          divPonto.style.height = 6 + posicaoAtual2 / 6 + 'px'
-          divPonto.style.opacity = (5 * posicaoAtual2) / this.containerHeight
-
-          const limSup2 = parseInt(divPonto.style.bottom)
-
+  
+          divPonto.style.width = 2 + posicaoAtual2 / 8 + 'px';
+          divPonto.style.height = 6 + posicaoAtual2 / 6 + 'px';
+          divPonto.style.opacity = (5 * posicaoAtual2) / this.containerHeight;
+  
+          const limSup2 = parseInt(divPonto.style.bottom);
+  
           if (limSup2 > 420 && ha_Pontos && this.container.contains(divPonto)) {
-            this.container.removeChild(divPonto)
+            this.container.removeChild(divPonto);
           } else if (ha_Pontos) {
-            const divBottom2 = 420 - parseInt(divPonto.style.bottom)
-            const constIndice2 = Math.floor(parseInt(divBottom2 / 4))
-
-            let fatiasPista = document.querySelectorAll('#container .div-layer')
-
+            const divBottom2 = 420 - parseInt(divPonto.style.bottom);
+            const constIndice2 = Math.floor(parseInt(divBottom2 / 4));
+  
+            let fatiasPista = document.querySelectorAll('#container .div-layer');
+  
             if (constIndice2 >= 0 && constIndice2 < 121) {
-              let fatias2 = fatiasPista[constIndice2]
-              var fatiasMarginLeft2 = fatias2.offsetLeft
+              let fatias2 = fatiasPista[constIndice2];
+              var fatiasMarginLeft2 = fatias2.offsetLeft;
             }
-
+  
             divPonto.style.marginLeft =
               parseInt(divPonto.style.marginLeft) +
               fatiasMarginLeft2 -
               220 +
-              'px'
-
-            const divPonto2 = document.querySelector('.pontoDiv')
-
-            let bottomPonto = parseInt(divPonto2.style.bottom)
-            let alturaDoPonto = parseInt(divPonto2.offsetHeight)
-            let diferencaAltura2 = Math.abs(this.bottomDoPlayer - bottomPonto)
-
+              'px';
+  
+            const divPonto2 = document.querySelector('.pontoDiv');
+  
+            let bottomPonto = parseInt(divPonto2.style.bottom);
+            let alturaDoPonto = parseInt(divPonto2.offsetHeight);
+            let diferencaAltura2 = Math.abs(this.bottomDoPlayer - bottomPonto);
+  
             if (this.bottomDoPlayer > bottomPonto) {
-              this.AlturaDoDeBaixo2 = alturaDoPonto
+              this.AlturaDoDeBaixo2 = alturaDoPonto;
             } else {
-              this.AlturaDoDeBaixo2 = this.alturaDoPlayer
+              this.AlturaDoDeBaixo2 = this.alturaDoPlayer;
             }
             if (diferencaAltura2 < this.AlturaDoDeBaixo2) {
-              let margemEsquerdaDoPonto = parseInt(divPonto2.style.marginLeft)
-              let larguraDoPonto = parseInt(divPonto2.offsetWidth)
+              let margemEsquerdaDoPonto = parseInt(divPonto2.style.marginLeft);
+              let larguraDoPonto = parseInt(divPonto2.offsetWidth);
               let diferencaMargem2 = Math.abs(
-                this.margemEsquerdaDoPlayer - margemEsquerdaDoPonto,
-              )
-
+                this.margemEsquerdaDoPlayer - margemEsquerdaDoPonto
+              );
+  
               if (this.margemEsquerdaDoPlayer > margemEsquerdaDoPonto) {
-                this.larguraDoMaisAesq2 = larguraDoPonto
+                this.larguraDoMaisAesq2 = larguraDoPonto;
               } else {
-                this.larguraDoMaisAesq2 = this.larguraDoPlayer
+                this.larguraDoMaisAesq2 = this.larguraDoPlayer;
               }
               if (
                 diferencaMargem2 < this.larguraDoMaisAesq2 &&
                 ha_Pontos &&
                 this.container.contains(divPonto)
               ) {
-                playgroundAudio.playStar()
-                this.pontao += 1
-                this.power.innerHTML = this.pontao
-                this.container.removeChild(divPonto)
-                clearInterval(frameInterval2)
+                playgroundAudio.playStar();
+                this.pontao += 1;
+                this.power.innerHTML = this.pontao;
+                this.container.removeChild(divPonto);
+                return;
               }
             }
           }
+  
+          
         }
-      }, this.speed)
+        requestAnimationFrame(animate);
+      };
+  
+      animate();
     }
   }
+  
 
   moveDivPosto() {
     if (this.speed >= -0.5 && this.isPageVisible) {
@@ -1382,7 +1518,7 @@ class MovingDiv {
 
       let posicaoAtual3 = 0
 
-      let frameInterval3 = setInterval(() => {
+      const animate = () => {
         let ha_Postos = document.querySelector('.postoDiv')
 
         this.gasolina = parseFloat(posto.innerHTML)
@@ -1476,12 +1612,14 @@ class MovingDiv {
                 this.gas += 1
                 posto.innerHTML = Math.ceil(this.gas)
                 this.container.removeChild(divPosto) // Remove a div quando atinge o limite inferior
-                clearInterval(frameInterval3)
               }
             }
           }
         }
-      }, this.speed)
+        requestAnimationFrame(animate);
+      };
+  
+      animate();
     }
   }
 
@@ -1504,9 +1642,12 @@ class MovingDiv {
 
   empilhamento() {
     const fatiasEstrada = document.querySelectorAll('#container .div-layer')
+    const containerAltura = this.container2.offsetHeight
+    const altura = containerAltura / (fatiasEstrada.length - 10)
+
     for (let i = 0; i < fatiasEstrada.length; i++) {
       const widthPercentage = i * 1
-      if (i < 100) {
+      if (i < 105) {
         fatiasEstrada[i].style.width = widthPercentage + '%'
       } else {
         fatiasEstrada[i].style.width = 100 + '%'
@@ -1515,7 +1656,7 @@ class MovingDiv {
       if (i >= 0 && i < 4) {
         fatiasEstrada[i].remove()
       }
-      fatiasEstrada[i].style.height = `4px`
+      fatiasEstrada[i].style.height = `${Math.exp(i / 200)}%`
     }
   }
 }
