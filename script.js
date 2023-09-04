@@ -402,6 +402,8 @@ class Carro {
     this.largura = largura
     this.velocidade = 0
     this.teclasPressionadas = {}
+    this.elemento.addEventListener('touchstart', this.iniciarMovimento.bind(this))
+    this.elemento.addEventListener('touchend', this.pararMovimento.bind(this))
 
     document.addEventListener('keydown', (event) => {
       this.teclasPressionadas[event.key.toLowerCase()] = true
@@ -424,6 +426,15 @@ class Carro {
   setX(x) {
     this.elemento.style.left = `${x}px`
   }
+  pararMovimento() {
+    this.touchX = null // Limpa a posição inicial do toque
+  }
+  iniciarMovimento(event) {
+    event.preventDefault() // Evita o comportamento padrão do toque (scroll, zoom, etc.)
+    const touch = event.touches[0]
+    this.touchX = touch.clientX // Armazena a posição inicial do toque
+  }
+
   movimentaHorizontal(x) {
     const coordX = this.getX()
     const soma = x + coordX
@@ -438,10 +449,10 @@ class Carro {
   }
   // Função para atualizar o movimento horizontal e velocidade do carro de forma contínua
   atualizarMovimento() {
-    if (this.teclasPressionadas['d']) {
-      this.movimentaHorizontal(10) // Ajuste a velocidade horizontal como desejar
-    } else if (this.teclasPressionadas['a']) {
-      this.movimentaHorizontal(-10) // Ajuste a velocidade horizontal como desejar
+    if (this.teclasPressionadas['d'] || this.touchX > window.innerWidth / 2) {
+      this.movimentaHorizontal(10) // Move para a direita
+    } else if (this.teclasPressionadas['a'] || this.touchX < window.innerWidth / 2) {
+      this.movimentaHorizontal(-10) // Move para a esquerda
     }
     requestAnimationFrame(this.atualizarMovimento.bind(this))
   }
@@ -996,9 +1007,12 @@ class MovingDiv {
 
   
   verificando() {
-    this.framez = setInterval(() => {
+    const animate = () => {
       this.animaBorda(this.speedBordCeil)
-    }, 15)
+      requestAnimationFrame(animate);
+    };
+
+    animate();
   }
   animaBorda(vel) {
     const fatiasBorda = document.querySelectorAll('#container .div-layer')
