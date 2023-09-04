@@ -990,8 +990,11 @@ class MovingDiv {
         this.quilometragem = this.minQuilometragem
         this.medidorVel.innerHTML = Math.ceil(this.quilometragem)
       }
-    }, 100)
+    }, 50)
   }
+
+
+  
   verificando() {
     this.framez = setInterval(() => {
       this.animaBorda(this.speedBordCeil)
